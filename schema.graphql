@@ -1,7 +1,32 @@
+
+enum Status{
+    ACTIVE
+    INACTIVE
+}
+
+type User {
+    id: ID!
+    firstName:String!
+    lastName:String!
+    email:String!
+    status: Status
+}
+input CreateUserInput{
+    firstName:String!
+    lastName:String!
+    email:String!
+}
+
+input UUID {
+    id:String!
+}
+
 type Query {
     testQuery:String
 }
 
 type Mutation{
     testMutation:String
+    createUser(userData: CreateUserInput!):User
+    deleteUser(userID: UUID!):User
 }
