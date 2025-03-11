@@ -1,5 +1,5 @@
 import express from 'express';
-import { initAppDataSource } from './database/initDB';
+import { initAppDataSource } from './database/initDataSource';
 import {createServer} from 'node:http';
 import { resolvers } from './resolvers';
 import { ApolloServer } from '@apollo/server';
