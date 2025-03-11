@@ -1,5 +1,6 @@
 import {DataSource, DataSourceOptions} from 'typeorm'
 import { PostgresConnectionOptions } from "typeorm/driver/postgres/PostgresConnectionOptions";
+import { User } from './Entities/User.entity';
 
 
 const  AppDataSource : DataSource = new DataSource({
@@ -9,9 +10,9 @@ const  AppDataSource : DataSource = new DataSource({
     username : 'root',
     password: '1234',
     database: 'postgres',
-    entities: [],
+    entities: [User],
     migrations: [__dirname + "/**/migrations/*{.js,.ts}"],
-    synchronize: false
+    synchronize: true
 } as PostgresConnectionOptions)
 
 
