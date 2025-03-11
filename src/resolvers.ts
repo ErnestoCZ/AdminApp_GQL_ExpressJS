@@ -1,18 +1,12 @@
 import { GraphQLError } from "graphql"
-import { AppDataSource } from "./database/initDB"
+import { Resolvers} from "./generated/schema"
 
 
-
-const typeDefs = `#graphql
-
-type Query {
-    greeting:String
-}
-`
-
-export const resolvers  = {
-
+export const resolvers : Resolvers  = {
     Query: {
-        greeting: () => "Hello World"
+
+    },
+    Mutation:{
+
     }
 }

@@ -1,3 +1,7 @@
 type Query {
-    greeting:String
+    testQuery:String
+}
+
+type Mutation{
+    testMutation:String
 }
