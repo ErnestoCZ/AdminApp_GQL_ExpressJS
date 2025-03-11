@@ -2,21 +2,17 @@ import {DataSource, DataSourceOptions} from 'typeorm'
 import { PostgresConnectionOptions } from "typeorm/driver/postgres/PostgresConnectionOptions";
 
 
-
-export const AppDataSource : DataSource = new DataSource({
+const  AppDataSource : DataSource = new DataSource({
     host: 'localhost',
     port: 5432,
     type: 'postgres',
     username : 'root',
     password: '1234',
-    database: 'admin_app',
+    database: 'postgres',
     entities: [],
-    migrations: [],
-    synchronize: true
+    migrations: [__dirname + "/**/migrations/*{.js,.ts}"],
+    synchronize: false
 } as PostgresConnectionOptions)
 
 
-
-export const initAppDataSource = async () => {
-    return await AppDataSource.initialize();
-}
+export default AppDataSource;
