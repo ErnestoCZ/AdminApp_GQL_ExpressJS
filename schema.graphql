@@ -5,12 +5,14 @@ enum Status{
 }
 
 type User {
-    id: ID!
-    firstName:String!
-    lastName:String!
-    email:String!
+    id: ID
+    firstName:String
+    lastName:String
+    email:String
     status: Status
 }
+
+
 input CreateUserInput{
     firstName:String!
     lastName:String!
@@ -23,6 +25,7 @@ input UUID {
 
 type Query {
     testQuery:String
+    getUsers:[User]
 }
 
 type Mutation{
