@@ -1,12 +1,9 @@
 import {Column, Entity, PrimaryGeneratedColumn} from 'typeorm'
+import { STATUS } from '../types';
 
-enum STATUS {
-    ACTIVE,
-    INACTIVE,
-}
 
 @Entity()
-export class User{
+export class UserEntity {
     @PrimaryGeneratedColumn('uuid')
     id!:string;
     
