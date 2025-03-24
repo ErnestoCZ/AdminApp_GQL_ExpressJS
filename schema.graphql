@@ -1,17 +1,39 @@
-
 enum Status{
     ACTIVE
     INACTIVE
 }
 
+type BillingItem {
+    id:ID!
+    title:String
+    user: User
+    billing: Billing
+}
+
+type Billing{
+    id: ID!
+    fromDate: Int
+    toDate: Int
+    title: String
+    description: String
+}
+type UserList {
+    items: [User!]!
+    totalCount: Int!
+}
+type BillingList {
+    items: [Billing!]!
+    totalCount: Int!
+}
+
+
 type User {
-    id: ID
+    id: ID!
     firstName:String
     lastName:String
     email:String
     status: Status
 }
-
 
 input CreateUserInput{
     firstName:String!
@@ -24,12 +46,18 @@ input UUID {
 }
 
 type Query {
-    testQuery:String
-    getUsers:[User]
+    testQuery(limit: Int):[User!]!
+    getUsers(limit: Int, offset:Int): UserList!
+    getBillings(limit:Int, offset:Int): BillingList!
+    getBillingItems: [BillingItem!]!
 }
 
 type Mutation{
+#User
     testMutation:String
     createUser(userData: CreateUserInput!):User
     deleteUser(userID: UUID!):User
+#Billing
+    # createBilling(billingData: BillingInput):
+
 }
