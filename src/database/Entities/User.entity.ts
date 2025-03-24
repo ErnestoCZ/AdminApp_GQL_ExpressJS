@@ -1,16 +1,17 @@
-import {Column, Entity, PrimaryGeneratedColumn} from 'typeorm'
+import {Column, Entity, JoinColumn, OneToMany, PrimaryGeneratedColumn} from 'typeorm'
 import { STATUS } from '../types';
+import { BillingItem } from './BillingItem.entity';
 
 
 @Entity()
-export class UserEntity {
+export class User {
     @PrimaryGeneratedColumn('uuid')
     id!:string;
     
-    @Column()
+    @Column({nullable:false})
     firstName!:string;
 
-    @Column()
+    @Column({nullable: false})
     lastName!:string;
 
     @Column({nullable:false})
@@ -18,4 +19,8 @@ export class UserEntity {
 
     @Column({type: 'enum', enum: STATUS, default:STATUS.ACTIVE})
     status!:STATUS
+
+    @OneToMany((type) => BillingItem, (billingItem) => billingItem.user, {nullable:true})
+    billingItems!: BillingItem[]
+
 }
