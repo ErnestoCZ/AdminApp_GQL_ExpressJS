@@ -5,10 +5,13 @@
     "src/generated/schema.ts": {
       "plugins": ["typescript", "typescript-resolvers"],
       "config" : {
+        "mapperTypeSuffix": "Model",
         "skipTypename": true,
         "mappers":{
-          "User" : "@/database/Entities/User.entity#UserEntity",
-          "Status" : "@/database/types#STATUS"
+          "User" : "@/database/Entities/User.entity#User",
+          "Status" : "@/database/types#STATUS",
+          "Billing" : "@/database/Entities/Billing.entity#Billing",
+          "BillingItem" : "@/database/Entities/BillingItem.entity#BillingItem"
         }
       }
     }
