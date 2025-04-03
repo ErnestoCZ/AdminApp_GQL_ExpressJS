@@ -1,26 +1,20 @@
-import {Column, Entity, JoinColumn, OneToMany, PrimaryGeneratedColumn} from 'typeorm'
-import { STATUS } from '../types';
-import { BillingItem } from './BillingItem.entity';
-
+import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { STATUS } from "../types";
 
 @Entity()
 export class User {
-    @PrimaryGeneratedColumn('uuid')
-    id!:string;
-    
-    @Column({nullable:false})
-    firstName!:string;
+  @PrimaryGeneratedColumn("uuid")
+  id!: string;
 
-    @Column({nullable: false})
-    lastName!:string;
+  @Column({ nullable: false })
+  firstName!: string;
 
-    @Column({nullable:false})
-    email!:string
+  @Column({ nullable: false })
+  lastName!: string;
 
-    @Column({type: 'enum', enum: STATUS, default:STATUS.ACTIVE})
-    status!:STATUS
+  @Column({ nullable: false })
+  email!: string;
 
-    @OneToMany((type) => BillingItem, (billingItem) => billingItem.user, {nullable:true})
-    billingItems!: BillingItem[]
-
+  @Column({ type: "enum", enum: STATUS, default: STATUS.ACTIVE })
+  status!: STATUS;
 }
