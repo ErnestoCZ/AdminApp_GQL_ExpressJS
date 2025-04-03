@@ -1,94 +1,100 @@
-import { Resolvers , UserList , User as GQLUser, BillingList} from "./generated/schema"
+import { Resolvers } from "./generated/schema";
 import AppDataSource from "./database/DataSource";
 import { User } from "./database/Entities/User.entity";
 import { GraphQLError } from "graphql";
-import { Billing } from "./database/Entities/Billing.entity";
-import { SelectQueryBuilder } from "typeorm";
 import { BillingItem } from "./database/Entities/BillingItem.entity";
+import { DeleteResult } from "typeorm";
+import { Constant } from "./database/Entities/Constant.entity";
 
-const UserRepository = AppDataSource.getRepository(User)
-const BillingRepository = AppDataSource.getRepository(Billing)
-const BillingItemRepository = AppDataSource.getRepository(BillingItem)
+const UserRepository = AppDataSource.getRepository(User);
+// const BillingRepository = AppDataSource.getRepository(Billing);
+const BillingItemRepository = AppDataSource.getRepository(BillingItem);
+const ConstantRepository = AppDataSource.getRepository(Constant);
 
-export const resolvers : Resolvers  = {
-    Query: {
-        testQuery: async (parent, {limit}) => {
-            const userQuery = AppDataSource.createQueryBuilder().select('*').from(User, 'user');
-            if(limit){
-                userQuery.limit(limit);
-            }
-            return await userQuery.execute();
+export const resolvers: Resolvers = {
+  Query: {
+    Users: async (parent, { limit, offset }) => {
+      const itemsQuery = UserRepository.createQueryBuilder().select("*");
+      const totalCountQuery = UserRepository.createQueryBuilder()
+        .select("user")
+        .getCount();
 
-        },
-        getUsers: async (parent, {limit,offset}) => {
-            const itemsQuery =  UserRepository.createQueryBuilder().select('user').from(User,'user');
-            const totalCountQuery =  UserRepository.createQueryBuilder().select('user').getCount();
-            
-            if(limit){
-                itemsQuery.limit(limit)
-            }
-            if(offset){
-                itemsQuery.offset(offset)
-            }
+      if (limit) {
+        itemsQuery.limit(limit);
+      }
+      if (offset) {
+        itemsQuery.offset(offset);
+      }
 
-            const [items, totalCount] = await Promise.all([itemsQuery.execute(), totalCountQuery])
-            return {items, totalCount};
-        },
-        getBillings: async (parent, {limit,offset}) => {
-            const itemsQuery = BillingRepository.createQueryBuilder().select('billing').from(Billing, 'billing')
-            const totalCountQuery = BillingRepository.createQueryBuilder().select('billing').getCount();
-
-            if(limit){
-                itemsQuery.limit(limit)
-            }
-            if(offset){
-                itemsQuery.offset(offset)
-            }
-
-            const [items, totalCount] = await Promise.all([itemsQuery.execute(),totalCountQuery]);
-            return {items,totalCount};
-        },
-        getBillingItems: async (parent) => {
-
-            const query = await AppDataSource.createQueryBuilder().leftJoin('billingitem.user', 'user').from(BillingItem,'billingitem').getMany()
-            console.log(query)
-            return query;
-
-        }
-        
-
-
-
+      const [items, totalCount] = await Promise.all([
+        itemsQuery.execute(),
+        totalCountQuery,
+      ]);
+      return { items, totalCount };
     },
-    Mutation:{
-        createUser: async (parent, { userData }): Promise<User> => {
-            const findUser = UserRepository.findOneBy({email: userData.email});
-            const createUser = UserRepository.create(userData);
-            const [foundUser, createdUser] = await Promise.all([findUser,createUser]);
-            if(!foundUser){
-                return UserRepository.save(createUser);
-            }
-            else{
-                throw new GraphQLError("User already Exists");
-            }
-        },
+    User: async (parent, { userId }) => {
+      const foundUser = await UserRepository.findOne({ where: { id: userId } });
 
-        // deleteUser: async (parent, {userID})  => {
+      if (foundUser) {
+        return foundUser;
+      } else {
+        throw new GraphQLError("User not found");
+      }
+    },
+  },
 
-        //     const user = UserRepository.findOneBy({id :userID.id});
-        //     const [foundUser] = await Promise.all([user]);
+  // STATUS: {
+  //   ACTIVE: STATUS.ACTIVE,
+  //   INACTIVE: STATUS.INACTIVE,
+  // },
+  // CONSTANT_TYPE: {},
+  User: {
+    billingsItems: async (parent) => {
+      const billings = await BillingItemRepository.find({
+        where: { user: { id: parent.id } },
+      });
+      return billings;
+    },
+  },
+  Billing: {
+    billingItems: async (User) => {
+      const billingItems = await BillingItemRepository.find({
+        where: { billing: { id: User.id } },
+      });
+      return billingItems;
+    },
+  },
+  Mutation: {
+    createUser: async (parent, { userData }): Promise<User> => {
+      const findUser = UserRepository.findOneBy({ email: userData.email });
+      const createUser = UserRepository.create(userData);
+      const [foundUser, createdUser] = await Promise.all([
+        findUser,
+        createUser,
+      ]);
+      if (!foundUser) {
+        return UserRepository.save(createdUser);
+      } else {
+        throw new GraphQLError("User already Exists");
+      }
+    },
+    deleteUser: async (parent, { userId }) => {
+      const deleteUserResponse: DeleteResult = await UserRepository.delete({
+        id: userId,
+      });
+      console.log(deleteUserResponse);
 
+      if (deleteUserResponse.affected && deleteUserResponse.affected >= 0) {
+        return userId;
+      } else {
+        throw new GraphQLError("User not found");
+      }
+    },
+    createConstant: async (parent, { constantData }) => {
+      const newConstant = ConstantRepository.create(constantData);
+      const res = await ConstantRepository.save(newConstant);
 
-        //     if(!foundUser){
-        //         throw new GraphQLError('User not found');
-        //     }
-        //     else{
-        //         return await UserRepository.createQueryBuilder().delete().from(UserEntity).where("id = :id", {id: userID.id}).execute();
-        //     }
-
-        //     return {} as User;
-        // }
-
-
-    }
-}
+      return res;
+    },
+  },
+};

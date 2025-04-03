@@ -1,12 +1,23 @@
-enum Status{
+enum STATUS{
     ACTIVE
     INACTIVE
+}
+
+enum CONSTANT_TYPE{
+    LOW  
+    MEDIUM  
+    HIGH  
+}
+
+type Constant{
+    id:ID!
+    value: Float!
+    type: CONSTANT_TYPE!
 }
 
 type BillingItem {
     id:ID!
     title:String
-    user: User
     billing: Billing
 }
 
@@ -16,6 +27,7 @@ type Billing{
     toDate: Int
     title: String
     description: String
+    billingItems: [BillingItem!]
 }
 type UserList {
     items: [User!]!
@@ -26,38 +38,40 @@ type BillingList {
     totalCount: Int!
 }
 
-
 type User {
     id: ID!
     firstName:String
     lastName:String
     email:String
-    status: Status
+    status: STATUS
+    billingsItems: [BillingItem!]!
 }
 
 input CreateUserInput{
     firstName:String!
     lastName:String!
     email:String!
+    status:STATUS!
 }
-
-input UUID {
-    id:String!
+input CreateConstantInput{
+    value: Float!
+    type: CONSTANT_TYPE!
 }
 
 type Query {
-    testQuery(limit: Int):[User!]!
-    getUsers(limit: Int, offset:Int): UserList!
-    getBillings(limit:Int, offset:Int): BillingList!
-    getBillingItems: [BillingItem!]!
+    Users(limit: Int, offset:Int): UserList!
+    Billings(limit:Int, offset:Int): BillingList!
+    BillingItems: [BillingItem!]!
+    User(userId: ID!): User
 }
 
 type Mutation{
 #User
     testMutation:String
     createUser(userData: CreateUserInput!):User
-    deleteUser(userID: UUID!):User
+    deleteUser(userId: ID!):ID
 #Billing
     # createBilling(billingData: BillingInput):
+    createConstant(constantData: CreateConstantInput!): Constant!
 
 }
