@@ -4,14 +4,24 @@
   "generates": {
     "src/generated/schema.ts": {
       "plugins": ["typescript", "typescript-resolvers"],
-      "config" : {
+      "config": {
         "mapperTypeSuffix": "Model",
         "skipTypename": true,
-        "mappers":{
-          "User" : "@/database/Entities/User.entity#User",
-          "Status" : "@/database/types#STATUS",
-          "Billing" : "@/database/Entities/Billing.entity#Billing",
-          "BillingItem" : "@/database/Entities/BillingItem.entity#BillingItem"
+        "makeResolverTypeCallable": true,
+        "wrapFieldDefinitions": true,
+        "strictResolvers": true,
+        "enumValues": {
+          "STATUS": "@/database/types#STATUS",
+          "CONSTANT_TYPE": "@/database/types#CONSTANT_TYPE"
+        },
+
+        "mappers": {
+          "STATUS": "@/database/types#STATUS",
+          "CONSTANT_TYPE": "@/database/types#CONSTANT_TYPE",
+          "User": "@/database/Entities/User.entity#User",
+          "Billing": "@/database/Entities/Billing.entity#Billing",
+          "BillingItem": "@/database/Entities/BillingItem.entity#BillingItem",
+          "Constant": "@/database/Entities/Constant.entity#Constant"
         }
       }
     }
