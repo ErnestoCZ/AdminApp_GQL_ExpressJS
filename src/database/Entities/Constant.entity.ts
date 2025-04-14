@@ -24,4 +24,10 @@ export class Constant {
 
   @Column("float", { nullable: false })
   value!: number;
+
+  @Column("text")
+  name!: string;
+
+  @Column("text")
+  description!: string;
 }
